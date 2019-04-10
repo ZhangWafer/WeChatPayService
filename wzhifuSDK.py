@@ -5,7 +5,6 @@ import time
 import hashlib
 import requests
 from random import Random
-
 import qrcode
 from bs4 import BeautifulSoup
 
