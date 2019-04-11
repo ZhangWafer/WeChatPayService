@@ -23,8 +23,6 @@ detail='<![CDATA[{"cost_price":1000,"receipt_id":"wx123","goods_detail":[{"goods
 spIp_before='183.57.22.10'
 spIp='<![CDATA[183.57.22.10]]>'
 
-
-
 #加签之前的字典数据
 dict1 = {'appid' : app_id, 'mch_id' : mch_id,'nonce_str': ramdom32_before,'body':'body',
      'detail':detail_before,'device_info':'013467007045764',

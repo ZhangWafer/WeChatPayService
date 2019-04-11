@@ -91,6 +91,19 @@ def wx_pay_unifiedorde(detail,url):
     return response.content
 
 
+def wx_pay_unifiedorde2(detail,url):
+    """
+    访问微信支付统一下单接口
+    :param detail:
+    :return:
+    """
+    detail['sign'] = get_sign(detail, API_KEY)
+    print(detail)
+    xml = trans_dict_to_xml(detail)  # 转换字典为XML
+    response = requests.request('post', url, data=xml)  # 以POST方式向微信公众平台服务器发起请求
+    # data_dict = trans_xml_to_dict(response.content)  # 将请求返回的数据转为字典
+    return response.content
+
 def pay_fail(err_msg):
     """
     微信支付失败

@@ -1,18 +1,28 @@
-from flask import Flask,render_template,request
+import xml.etree.ElementTree as ET
+from flask import Flask,render_template,request,jsonify
 import wzhifuSDK
 from wzhifuSDK import order_num
+
+from xml.dom.minidom import parseString
 
 app = Flask(__name__)
 
 # 微信支付信息
-APP_ID = "wx689b069eb440eed1"  # 你公众账号上的appid
-MCH_ID = "1521585261"  # 你的商户号
-API_KEY = "zh43be9fe2fd47a8171zhga21e123713"  # 微信商户平台(pay.weixin.qq.com) -->账户设置 -->API安全 -->密钥设置，设置完成后把密钥复制到这里
-APP_SECRECT = "f82a881cd1a9da63c279120b0d167333"
-UFDODER_URL = "https://api.mch.weixin.qq.com/pay/micropay"  # 该url是微信下单api
+#加签前信息
+APP_ID = "wx19d346a2910ab88e"  # 你公众账号上的appid
+MCH_ID = "1523807111"  # 你的商户号
+API_KEY = "Cv1D2rLD4K6bnlzu3kOZasf24YfsTiOf"  # 微信商户平台(pay.weixin.qq.com) -->账户设置 -->API安全 -->密钥设置，设置完成后把密钥复制到这里
+APP_SECRECT = "dc71b5f497d9a35162e7606a8dff6f78"
+UFDODER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder"  # 该url是微信下单api
+ramdom8_before=wzhifuSDK.random_str(8)
+detail_before='{"cost_price":1000,"receipt_id":"wx123","goods_detail":[{"goods_id":"78","goods_name":"lunch","quantity":1,"price":1000},{"goods_id":"666","goods_name":"lunch","quantity":2,"price":1}]}'
+out_trade_no_before=order_num('13631240700')
+spIp_before='183.57.22.10'
+NOTIFY_URL_before='https://www.baidu.com/'
 
-NOTIFY_URL = "http://www.baidu.com/"  # 微信支付结果回调接口，需要改为你的服务器上处理结果回调的方法路径
-CREATE_IP = 'xxx'  # 你服务器的IP
+
+#加签后信息
+
 
 @app.route('/')
 def hello_world():
@@ -20,26 +30,34 @@ def hello_world():
 
 @app.route('/login',methods=['GET','POST'])
 def login():
-    if request.method == 'GET': #如果请求方法时GET,返回login.html模板页面
-        dict1 = {'appid': APP_ID, 'mchid': MCH_ID, 'nonce_str': wzhifuSDK.random_str(32), 'body': '午餐',
-                 'detail': "{'cost_price': 608800,'receipt_id': 'wx123','goods_detail': '[{'goods_id': '商品编码','goods_name': '','quantity': 1,'price': 528800},{'goods_id': '商品编码','goods_name': 'iPhone6s 32G','quantity': 1,'price': 608800}]}'}",
-                 'out_trade_no': order_num('13631240780'), 'total_fee': '888', 'spbill_create_ip': '192.168.117.70',
-                 'notify_url': NOTIFY_URL, 'trade_type': 'JSAPI'}
+    if request.method == 'POST': #如果请求方法时GET,返回login.html模板页面
+        dict1 = {'appid': APP_ID, 'mch_id': MCH_ID, 'nonce_str': ramdom8_before, 'body': 'body',
+                 'detail': detail_before, 'device_info': '013467007045764',
+                 'out_trade_no': out_trade_no_before, 'total_fee': '666', 'spbill_create_ip': spIp_before,
+                 'notify_url': NOTIFY_URL_before, 'trade_type': 'MWEB'}
 
         Sign = wzhifuSDK.get_sign(dict1, API_KEY)
 
-        Sign = 'F63AEAD518AEC1FF685A8FA838F2ADB7'
-
-        dict2 = {'appid': APP_ID, 'mchid': MCH_ID, 'nonce_str': wzhifuSDK.random_str(32), 'sign': Sign, 'body': '午餐',
-                 'detail': "{'cost_price': 608800,'receipt_id': 'wx123','goods_detail': '[{'goods_id': '商品编码','goods_name': '','quantity': 1,'price': 528800},{'goods_id': '商品编码','goods_name': 'iPhone6s 32G','quantity': 1,'price': 608800}]}'}",
-                 'out_trade_no': order_num('13631240780'), 'total_fee': '888', 'spbill_create_ip': '192.168.117.70',
-                 'notify_url': NOTIFY_URL, 'trade_type': 'JSAPI'}
+        dict2 = {'appid': APP_ID, 'mch_id': MCH_ID, 'nonce_str': ramdom8_before, 'sign': Sign, 'body': '<![CDATA[body]]>',
+                 'detail': detail_before, 'device_info': '013467007045764',
+                 'out_trade_no': out_trade_no_before, 'total_fee': '666', 'spbill_create_ip': spIp_before, 'notify_url': NOTIFY_URL_before,
+                 'trade_type': 'MWEB'}
 
         response = wzhifuSDK.wx_pay_unifiedorde(dict2, UFDODER_URL)
+        print(response.decode())
+        root=ET.fromstring(response.decode())
+        returnUrl=root.find('mweb_url').text
+        print(returnUrl)
 
-        return request.values.get('username')+'1456461616'
+        return jsonify(webUrl=returnUrl)
 
 
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Headers','Content-Type,Authorization,session_id')
+    response.headers.add('Access-Control-Allow-Headers', 'GET,PUT,POST,DELETE,OPTIONS,HEAD')
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 if __name__ == '__main__':
-    app.run(port=5000,debug=True)
+    app.run(debug=True)
