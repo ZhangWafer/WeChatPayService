@@ -3,10 +3,9 @@ from flask import Flask,render_template,request,jsonify
 import wzhifuSDK
 from wzhifuSDK import order_num
 
-from xml.dom.minidom import parseString
-
 app = Flask(__name__)
 
+print("服务器启动")
 # 微信支付信息
 #加签前信息
 APP_ID = "wx19d346a2910ab88e"  # 你公众账号上的appid
@@ -26,6 +25,7 @@ NOTIFY_URL_before='https://www.baidu.com/'
 
 @app.route('/')
 def hello_world():
+    input("ssss")
     return 'Hello World!'
 
 @app.route('/login',methods=['GET','POST'])
