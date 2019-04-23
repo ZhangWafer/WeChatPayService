@@ -17,7 +17,7 @@ NOTIFY_URL = "<![CDATA[https://www.baidu.com/]]>"  # 微信支付结果回调接
 CREATE_IP = '183.57.22.10'  # 你服务器的IP
 
 random32="<![CDATA["+ramdom32_before+"]]>"
-out_trade_no_before=order_num('13631240700')
+out_trade_no_before=order_num()
 out_trade_no='<![CDATA['+out_trade_no_before+']]>'
 detail='<![CDATA[{"cost_price":1000,"receipt_id":"wx123","goods_detail":[{"goods_id":"78","goods_name":"lunch","quantity":1,"price":1000},{"goods_id":"666","goods_name":"lunch","quantity":2,"price":1}]}]]>'
 spIp_before='183.57.22.10'

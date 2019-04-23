@@ -35,14 +35,14 @@ def random_str(randomlength=32):
     return str
 
 
-def order_num(phone):
+def order_num():
     """
     生成扫码付款订单号
     :param phone: 手机号
     :return:
     """
     local_time = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
-    result = phone + 'T' + local_time + random_str(5)
+    result =  local_time + random_str(5)
     return result
 
 
