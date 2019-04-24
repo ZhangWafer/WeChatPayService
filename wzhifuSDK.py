@@ -42,7 +42,7 @@ def order_num():
     :return:
     """
     local_time = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
-    result =  local_time + random_str(5)
+    result = local_time + random_str(5)
     return result
 
 
